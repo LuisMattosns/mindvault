@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindVault Books</title>
 
 <style>
@@ -99,6 +100,41 @@ padding:8px;
 border-radius:8px;
 border:none;
 width:200px;
+}
+
+/* RESPONSIVO CELULAR */
+
+@media (max-width:768px){
+
+nav{
+flex-wrap:wrap;
+}
+
+.search{
+width:100%;
+margin-top:10px;
+}
+
+button{
+width:100%;
+margin-top:8px;
+}
+
+.book{
+flex-direction:column;
+align-items:center;
+text-align:center;
+}
+
+.book img{
+width:120px;
+height:170px;
+}
+
+.page{
+padding:20px;
+}
+
 }
 
 </style>

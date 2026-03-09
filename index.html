@@ -4,6 +4,7 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindVault</title>
 
 <style>
@@ -122,6 +123,46 @@ border:none;
 width:200px;
 }
 
+/* RESPONSIVO CELULAR */
+
+@media (max-width:768px){
+
+nav{
+flex-wrap:wrap;
+}
+
+.search{
+width:100%;
+margin-top:10px;
+}
+
+.nav-buttons{
+width:100%;
+display:flex;
+flex-wrap:wrap;
+margin-top:10px;
+}
+
+.nav-buttons button{
+flex:1;
+margin:5px 0;
+}
+
+button{
+width:100%;
+}
+
+.page{
+padding:20px;
+}
+
+.profile img{
+width:90px;
+height:90px;
+}
+
+}
+
 </style>
 
 </head>
@@ -136,7 +177,11 @@ width:200px;
 
 <div class="nav-buttons">
 
-<button onclick="showPage('feed')">Feed</button> <button onclick="showPage('perfil')">Perfil</button> <button onclick="showPage('login')">Entrar</button> <button onclick="showPage('cadastro')">Cadastrar</button> <button onclick="logout()">Sair</button>
+<button onclick="showPage('feed')">Feed</button>
+<button onclick="showPage('perfil')">Perfil</button>
+<button onclick="showPage('login')">Entrar</button>
+<button onclick="showPage('cadastro')">Cadastrar</button>
+<button onclick="logout()">Sair</button>
 
 </div>
 
