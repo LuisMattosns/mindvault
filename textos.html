@@ -384,6 +384,8 @@ container.innerHTML+=`
 
 <button onclick="abrirLivro(${i})">Ler</button>
 
+<button onclick="compartilharLivro(${i})">Compartilhar</button>
+
 </div>
 
 </div>
@@ -400,6 +402,32 @@ search.addEventListener("input",renderBooks)
 
 renderBooks()
 
+/* COMPARTILHAR LIVRO */
+
+async function compartilharLivro(index){
+
+let books=JSON.parse(localStorage.getItem("books") || "[]")
+
+let livro=books[index]
+
+let textoCompartilhar="📚 "+livro.titulo+" - "+livro.autor+"\n\n"+(livro.sinopse || "")
+
+if(navigator.share){
+
+navigator.share({
+title:livro.titulo,
+text:textoCompartilhar
+})
+
+}else{
+
+navigator.clipboard.writeText(textoCompartilhar)
+
+alert("Texto do livro copiado para compartilhar manualmente.")
+
+}
+
+}
 </script>
 
 </body>
