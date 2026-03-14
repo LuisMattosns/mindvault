@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindVault Books</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 
 *{
@@ -102,8 +104,6 @@ border:none;
 width:200px;
 }
 
-/* RESPONSIVO CELULAR */
-
 @media (max-width:768px){
 
 nav{
@@ -158,8 +158,6 @@ padding:20px;
 
 </nav>
 
-<!-- BIBLIOTECA -->
-
 <div id="feed" class="page active">
 
 <h2>Biblioteca</h2>
@@ -168,26 +166,20 @@ padding:20px;
 
 </div>
 
-<!-- CRIAR LIVRO -->
-
 <div id="criar" class="page">
 
 <h2>Criar livro</h2>
 
 <input id="tituloLivro" placeholder="Título">
-
 <input id="autorLivro" placeholder="Autor">
-
 <input type="file" id="capaLivro">
 
 <textarea id="sinopseLivro" placeholder="Sinopse"></textarea>
-
 <textarea id="descricaoLivro" placeholder="Descrição"></textarea>
 
 <h3>Novo capítulo</h3>
 
 <input id="tituloCapitulo" placeholder="Título do capítulo">
-
 <textarea id="textoCapitulo" placeholder="Escreva o capítulo"></textarea>
 
 <button onclick="adicionarCapitulo()">Adicionar capítulo</button>
@@ -197,8 +189,6 @@ padding:20px;
 <button onclick="salvarLivro()">Salvar livro</button>
 
 </div>
-
-<!-- LEITOR -->
 
 <div id="ler" class="page">
 
@@ -212,23 +202,18 @@ padding:20px;
 
 <script>
 
+const { jsPDF } = window.jspdf
+
 let capitulos=[]
 
 function showPage(id){
-
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
-
 document.getElementById(id).classList.add("active")
-
 }
 
 function goHome(){
-
 window.location.href="index.html"
-
 }
-
-/* ADICIONAR CAPÍTULO */
 
 function adicionarCapitulo(){
 
@@ -240,10 +225,7 @@ alert("Escreva título e texto")
 return
 }
 
-capitulos.push({
-titulo,
-texto
-})
+capitulos.push({titulo,texto})
 
 contadorCap.innerText="Capítulos adicionados: "+capitulos.length
 
@@ -251,8 +233,6 @@ tituloCapitulo.value=""
 textoCapitulo.value=""
 
 }
-
-/* SALVAR LIVRO */
 
 function salvarLivro(){
 
@@ -316,8 +296,6 @@ finalizarSalvamento("")
 
 }
 
-/* ABRIR LIVRO */
-
 function abrirLivro(i){
 
 let books=JSON.parse(localStorage.getItem("books") || "[]")
@@ -352,8 +330,6 @@ textoLeitura.innerText=books[livroIndex].capitulos[capIndex].texto
 
 }
 
-/* RENDER */
-
 function renderBooks(){
 
 let books=JSON.parse(localStorage.getItem("books") || "[]")
@@ -384,7 +360,7 @@ container.innerHTML+=`
 
 <button onclick="abrirLivro(${i})">Ler</button>
 
-<button onclick="compartilharLivro(${i})">Compartilhar</button>
+<button onclick="gerarPDF(${i})">Compartilhar</button>
 
 </div>
 
@@ -402,32 +378,102 @@ search.addEventListener("input",renderBooks)
 
 renderBooks()
 
-/* COMPARTILHAR LIVRO */
-
-async function compartilharLivro(index){
+async function gerarPDF(index){
 
 let books=JSON.parse(localStorage.getItem("books") || "[]")
 
 let livro=books[index]
 
-let textoCompartilhar="📚 "+livro.titulo+" - "+livro.autor+"\n\n"+(livro.sinopse || "")
+let pdf=new jsPDF()
 
-if(navigator.share){
+let y=20
+
+pdf.setFontSize(22)
+pdf.text(livro.titulo,20,y)
+
+y+=10
+
+pdf.setFontSize(14)
+pdf.text("Autor: "+livro.autor,20,y)
+
+y+=15
+
+pdf.setFontSize(16)
+pdf.text("Sinopse",20,y)
+
+y+=10
+
+pdf.setFontSize(12)
+
+let sinopse=pdf.splitTextToSize(livro.sinopse || "",170)
+
+pdf.text(sinopse,20,y)
+
+y+=sinopse.length*7+10
+
+livro.capitulos.forEach((c,i)=>{
+
+if(y>260){
+pdf.addPage()
+y=20
+}
+
+pdf.setFontSize(16)
+pdf.text("Capítulo "+(i+1)+": "+c.titulo,20,y)
+
+y+=10
+
+pdf.setFontSize(12)
+
+let texto=pdf.splitTextToSize(c.texto,170)
+
+texto.forEach(l=>{
+
+if(y>280){
+pdf.addPage()
+y=20
+}
+
+pdf.text(l,20,y)
+y+=7
+
+})
+
+y+=10
+
+})
+
+let paginas=pdf.getNumberOfPages()
+
+for(let i=1;i<=paginas;i++){
+
+pdf.setPage(i)
+
+pdf.setFontSize(10)
+
+pdf.text("Página "+i+" / "+paginas,180,290,null,null,"right")
+
+}
+
+let blob=pdf.output("blob")
+
+let file=new File([blob],livro.titulo+".pdf",{type:"application/pdf"})
+
+if(navigator.canShare && navigator.canShare({files:[file]})){
 
 navigator.share({
 title:livro.titulo,
-text:textoCompartilhar
+files:[file]
 })
 
 }else{
 
-navigator.clipboard.writeText(textoCompartilhar)
-
-alert("Texto do livro copiado para compartilhar manualmente.")
+pdf.save(livro.titulo+".pdf")
 
 }
 
 }
+
 </script>
 
 </body>
