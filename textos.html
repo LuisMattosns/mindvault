@@ -200,6 +200,12 @@ padding:20px;
 
 </div>
 
+<!-- BOTÃO NOVO -->
+
+<div style="text-align:center;margin-top:40px;margin-bottom:40px;">
+<button onclick="irPersonagens()">MindVault Personagens</button>
+</div>
+
 <script>
 
 const { jsPDF } = window.jspdf
@@ -213,6 +219,10 @@ document.getElementById(id).classList.add("active")
 
 function goHome(){
 window.location.href="index.html"
+}
+
+function irPersonagens(){
+window.location.href="personagens.html"
 }
 
 function adicionarCapitulo(){
